@@ -1,68 +1,65 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
-import ReactCss from 'react-addons-css-transition-group'
-
-import Styles from './Styles.css'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 class AnimatedShoppingList extends Component {
-
     constructor() {
         super(...arguments);
         this.state = {
             items: [
-                {id: 1, name: 'berries'},
-                {id: 2, name: 'nut milk'},
-                {id: 3, name: 'butter'},
-                {id: 4, name: 'egg'},
+                {id: 1, name: 'Milk'},
+                {id: 2, name: 'Yogurt'},
+                {id: 3, name: 'Orange Juice'},
             ]
         }
     }
 
-    handleRemove(i) {
-        let {items} = this.state;
-        let newItems = items;
-        newItems.splice(i, 1);
-        this.setState({
-            items: newItems
-        })
-    }
-
-    handleChange(e) {
+    handleChange(evt) {
         let {items} = this.state;
 
-        if(e.key === 'Enter'){
+        if (evt.key === 'Enter') {
             let newItem = {
-                id:Date.now(),
-                name:e.target.value
+                id: Date.now(),
+                name: evt.target.value
             }
             let newItems = items.concat(newItem);
             this.setState({
-                items:newItems
-            })
-            e.target.value = '';
+                items: newItems});
+            evt.target.value = '';
         }
     }
 
+    handleRemove(i) {
+        var newItems = this.state.items;
+        newItems.splice(i, 1);
+        this.setState({items: newItems});
+    }
+
+
     render() {
         let {items} = this.state;
-        let shoppingItems = items.map((item, i) => {
-            return (
-                <li key={i}
-                     className={item}
-                     onClick={this.handleRemove.bind(this, i)}>
-                    {item.name}
-                </li>
-                )
-        });
 
+        console.log('this.state.items', items);
+
+        let shoppingItems = items.map((item, i) => (
+            <div key={item.id}
+                 className="item"
+                 onClick={this.handleRemove.bind(this, i)}>
+                {item.name}
+            </div>));
+        console.log('shopping', shoppingItems);
         return (
             <div>
-                <h2>Shopping List</h2>
-                <ul>{shoppingItems}</ul>
+                <ReactCSSTransitionGroup transitionName="shoppingList"
+                                         transitionAppear={true}
+                                         transitionAppearTimeout={500}
+                                         transitionEnterTimeout={1000}
+                                         transitionLeaveTimeout={1000}>
+                    {shoppingItems}
+                </ReactCSSTransitionGroup>
                 <input type="text"
-                value={this.state.newItem}
-                onKeyDown={this.handleChange.bind(this)}
-                />
+                       value={this.state.newItem}
+                       onKeyDown={this.handleChange.bind(this)}/>
             </div>
         );
     }
